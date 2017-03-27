@@ -41,6 +41,4 @@ if (isset($_POST['book'])) {
   		echo "</ul>\n";
 	}
 	$error_list[0] = "Alla obligatoriska fält är ej ifyllda.";
-
-
 }
