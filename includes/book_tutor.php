@@ -8,32 +8,36 @@ if (isset($_POST['book'])) {
 	foreach ($_POST as $key => $val) {
 		$_POST[$key] = trim($val);
 	}
-
-	$userName = $_POST['name'];
-	$subject = $_POST['subject'];
-	$tutor = $_POST['tutor'];
-	$startTime = $_POST['starttime'];
-	$endTime = $_POST['endtime'];
+	// letar efter tomma fält
+	if (empty($_POST['name']) || empty($_POST['subject']) || empty($_POST['tutor']) || empty($_POST['starttime']) || empty($_POST['endtime'])) {
+		$reg_error[] = 0;
+	}
 
 	if (!isset($reg_error)) {
 		// ifall det inte är några fel läggs bokningen in i databasen
-		$stm = $pdo->prepare("INSERT INTO `bookingtutor`(`userName`, `userId`, `subject`, `tutor`, `startTime`, `endTime`) VALUES ('$userName', :userId, '$subject', '$tutor', '$startTime', '$endTime')");
+		$stm = $pdo->prepare("INSERT INTO `bookingtutor`(`userName`, `userId`, `subject`, `tutor`, `startTime`, `endTime`) VALUES (:userName, :userId, :subject, :tutor, :startTime, :endTime)");
 
-		try {
-			$stm->execute(['userId' => $_SESSION['session_id']]);
-		}
-		catch (PDOException $e) {
-			echo "Error: " . $e->getMessage();
-		}
+			$stm->execute([
+				'userName' => $_POST['name'],
+				'userId' => $_SESSION['session_id'],
+				'subject' => $_POST['subject'],
+				'tutor' => $_POST['tutor'],
+				'startTime' => $_POST['starttime'],
+				'endTime' => $_POST['endtime'],
+				]);
 
 		$_SESSION['userid'] = $pdo->lastInsertId();
-		// sparar info till en bookingsummary, som vi inte använder
-		$_SESSION['bookobj'] = $_POST;
-
-		echo "<script type='text/javascript'>
-	   	document.location.href = '../html/my_page.php';
-		</script>";
-	    exit;
+		
+		header("Location: ../html/my_page.php");
 	}
+
+	else {
+		echo "<p>Något blev fel:<br>\n";
+		echo "<ul>\n";
+  		for ($i = 0; $i < sizeof($reg_error); $i++) {
+    		echo "<li>{$error_list[$reg_error[$i]]}</li>\n";
+  		}
+  		echo "</ul>\n";
+	}
+	$error_list[0] = "Alla obligatoriska fält är ej ifyllda.";
 }
-?>
