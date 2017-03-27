@@ -10,18 +10,20 @@ if (isset($_POST['book'])) {
 		$_POST[$key] = trim($val);
 	}
 	
-	$userName = $_POST['name'];
-	$children = $_POST['children'];
-	$babysitter = $_POST['babysitter'];
-	$startTime = $_POST['starttime'];
-	$endTime = $_POST['endtime'];	
 
 	if (!isset($reg_error)) {
 		// ifall det inte är några fel läggs bokningen in i databasen
-		$stm = $pdo->prepare("INSERT INTO `bookingbabysitter` (`userName`, `userId`, `children`, `babysitter`, `startTime`, `endTime`) VALUES ('$userName', :userId, '$children', '$babysitter', '$startTime', '$endTime')");
+		$stm = $pdo->prepare("INSERT INTO `bookingbabysitter` (`userName`, `userId`, `children`, `babysitter`, `startTime`, `endTime`) VALUES (:userName, :userId, :children, :babysitter, :startTime, :endTime)");
 
 		try {
-			$stm->execute(['userId' => $_SESSION['session_id']]);
+			$stm->execute([
+				'userName' => $_POST['name'],
+				'userId' => $_SESSION['session_id'],
+				'children' => $_POST['children'],
+				'babysitter' => $_POST['babysitter'],
+				'startTime' => $_POST['starttime'],
+				'endTime' => $_POST['endtime'];
+				]);
 		}
 		catch (PDOException $e) {
 			echo "Error: " . $e->getMessage();
@@ -37,4 +39,3 @@ if (isset($_POST['book'])) {
 	    exit;
 	}
 }
-?>
