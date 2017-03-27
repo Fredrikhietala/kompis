@@ -1,4 +1,4 @@
-/includes/config.example.php
+/includes/config.php
 
 # Windows image file caches
 Thumbs.db
