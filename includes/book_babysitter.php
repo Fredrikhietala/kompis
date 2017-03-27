@@ -9,33 +9,38 @@ if (isset($_POST['book'])) {
 	foreach ($_POST as $key => $val) {
 		$_POST[$key] = trim($val);
 	}
-	
+	// letar efter tomma fält
+	if (empty($_POST['name']) || empty($_POST['children']) || empty($_POST['babysitter']) || empty($_POST['starttime']) || empty($_POST['endtime'])) {
+		$reg_error[] = 0;
+	}
 
 	if (!isset($reg_error)) {
 		// ifall det inte är några fel läggs bokningen in i databasen
 		$stm = $pdo->prepare("INSERT INTO `bookingbabysitter` (`userName`, `userId`, `children`, `babysitter`, `startTime`, `endTime`) VALUES (:userName, :userId, :children, :babysitter, :startTime, :endTime)");
 
-		try {
-			$stm->execute([
-				'userName' => $_POST['name'],
-				'userId' => $_SESSION['session_id'],
-				'children' => $_POST['children'],
-				'babysitter' => $_POST['babysitter'],
-				'startTime' => $_POST['starttime'],
-				'endTime' => $_POST['endtime'];
-				]);
-		}
-		catch (PDOException $e) {
-			echo "Error: " . $e->getMessage();
-		}
+		$stm->execute([
+			'userName' => $_POST['name'],
+			'userId' => $_SESSION['session_id'],
+			'children' => $_POST['children'],
+			'babysitter' => $_POST['babysitter'],
+			'startTime' => $_POST['starttime'],
+			'endTime' => $_POST['endtime'],
+			]);
 
 		$_SESSION['userid'] = $pdo->lastInsertId();
-		// sparar info till en bookingsummary, som vi inte använder
-		$_SESSION['bookobj'] = $_POST;
 
-		echo "<script type='text/javascript'>
-	   	document.location.href = '../html/my_page.php';
-		</script>";
-	    exit;
+		header("Location: ../html/my_page.php");
 	}
+
+	else {
+		echo "<p>Något blev fel:<br>\n";
+		echo "<ul>\n";
+  		for ($i = 0; $i < sizeof($reg_error); $i++) {
+    		echo "<li>{$error_list[$reg_error[$i]]}</li>\n";
+  		}
+  		echo "</ul>\n";
+	}
+	$error_list[0] = "Alla obligatoriska fält är ej ifyllda.";
+
+
 }
