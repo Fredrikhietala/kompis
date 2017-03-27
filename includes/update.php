@@ -1,35 +1,33 @@
 <?php
+session_start();
 
 require 'config.php';
 
-$form = $_POST;
+if (isset($_SESSION['session_id'])) {
 
-$id = $form['id'];
-$name = $form['name'];
-$email = $form['email'];
-$role = $form['role'];
-$adress = $form['adress'];
-$zipCode = $form['zipCode'];
-$city = $form['city'];
-$phoneNumber = $form['phoneNumber'];
+	$form = $_POST;
+	$id = $_SESSION['session_id'];
+	$name = $form['name'];
+	$email = $form['epost'];
+	$adress = $form['adress'];
+	$zipCode = $form['zipCode'];
+	$city = $form['city'];
+	$phoneNumber = $form['phoneNumber'];
 
-$sql = "UPDATE users SET id = :id, name = :name, email = :email, role = :role, adress = :adress, zipCode = :zipCode, city = :city, phoneNumber = :phoneNumber
- WHERE id = :id";
+	$sql = "UPDATE users SET name = :name, email = :email, role = :role, adress = :adress, zipCode = :zipCode, city = :city, phoneNumber = :phoneNumber WHERE id = :id";
 
-$stmt = $pdo->prepare($sql);
-$stmt->bindParam(':id', $_POST['id'], PDO::PARAM_INT);
-$stmt->bindParam(':name', $_POST['name'], PDO::PARAM_STR);
-$stmt->bindParam(':email', $_POST['email'], PDO::PARAM_STR);
-$stmt->bindParam(':role', $_POST['role'], PDO::PARAM_STR);
-$stmt->bindParam(':adress', $_POST['adress'], PDO::PARAM_STR);
-$stmt->bindParam(':zipCode', $_POST['zipCode'], PDO::PARAM_STR);
-$stmt->bindParam(':city', $_POST['city'], PDO::PARAM_STR);
-$stmt->bindParam(':phoneNumber', $_POST['phoneNumber'], PDO::PARAM_STR);
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute([
+			'name' => $_POST['name'],
+			'email' => $_POST['epost'],
+			'role' => $_POST['role'],
+			'adress' => $_POST['adress'],
+			'zipCode' => $_POST['zipCode'],
+			'city' => $_POST['city'],
+			'phoneNumber' => $_POST['phoneNumber'],
+			'id' => $_SESSION['session_id'],
+			]);
 
+	}
 
-$stmt->execute();
-
-header("Location: ../html/my_page.php?id=".$id."");
-
-
-?>
+header("Location: ../html/my_page.php");
