@@ -111,7 +111,7 @@ function babysitter_received(){
 			}
 		}
 	};
-	xmlhttp.open("GET", "../includes/showbabysitter.php?starttime=" + start + "&endtime=" + end, true);
+	xmlhttp.open("GET", "../includes/show_babysitter.php?starttime=" + start + "&endtime=" + end, true);
 	xmlhttp.send(); 
 }
 
@@ -147,6 +147,6 @@ function tutor_received(){
 			}
 		}
 	};
-	xmlhttp.open("GET", "../includes/showtutor.php?starttime=" + start + "&endtime=" + end, true);
+	xmlhttp.open("GET", "../includes/show_tutor.php?starttime=" + start + "&endtime=" + end, true);
 	xmlhttp.send();
 }
